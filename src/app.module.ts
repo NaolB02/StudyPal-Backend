@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { PendingTopicModule } from './pending-topic/pending-topic.module';
 import { CompleteTopicModule } from './complete-topic/complete-topic.module';
+import { AskedTopicModule } from './asked-topic/asked-topic.module';
 
 @Module({
   imports: [
@@ -13,8 +12,6 @@ import { CompleteTopicModule } from './complete-topic/complete-topic.module';
     AskedTopicModule,
     PendingTopicModule,
     CompleteTopicModule],
-  controllers: [AppController],
-  providers: [AppService],
 
 })
 export class AppModule {}
