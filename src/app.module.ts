@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { PendingTopicModule } from './pending-topic/pending-topic.module';
 import { CompleteTopicModule } from './complete-topic/complete-topic.module';
 import { AskedTopicModule } from './asked-topic/asked-topic.module';
+import { ConfigModule } from '@nestjs/config/dist/config.module';
 
 @Module({
   imports: [
@@ -11,7 +12,11 @@ import { AskedTopicModule } from './asked-topic/asked-topic.module';
     AuthModule,
     AskedTopicModule,
     PendingTopicModule,
-    CompleteTopicModule],
+    CompleteTopicModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    })
+  ],
 
 })
 export class AppModule {}

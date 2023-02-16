@@ -19,7 +19,7 @@ export const UserSchema = new mongoose.Schema({
 
 
 export interface User extends mongoose.Document {
-    id: number;
+    id: mongoose.Schema.Types.ObjectId;
     fullname: string;
     username: string;
     email: string;
