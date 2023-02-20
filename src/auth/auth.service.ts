@@ -25,10 +25,9 @@ export class AuthService {
     dto.password = hash
     // save the new user in the db
     try{
-
-      const new_user = new this.userModel(dto)
-     const result = await new_user.save()
-     return result
+    const new_user = new this.userModel(dto)
+    const result = await new_user.save()
+    return result
     }
     catch(error){
       if(error.code === 11000){
@@ -38,7 +37,7 @@ export class AuthService {
                 );
       }
     }
-      }
+  }
     async login(dto: AuthDto) {
 
       //find user by username
