@@ -8,7 +8,6 @@ import { AskedTopicController } from './asked-topic.controller';
 import { AskedTopicService } from './asked-topic.service';
 import { AskedTopicSchema } from './schema/asked-topic.schema';
 
-
 @Module({
     imports: [
       MongooseModule.forFeature([{name: "AskedTopic", schema: AskedTopicSchema}]),
