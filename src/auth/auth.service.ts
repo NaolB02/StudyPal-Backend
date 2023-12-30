@@ -1,29 +1,89 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import {
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
+import { AuthDto } from './dto';
+import * as argon from 'argon2';
+import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
-import { CreateUserDto } from './dto/createuser.dto';
-import { User } from './schema/auth.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from './schema/user.schema';
+
 
 @Injectable()
 export class AuthService {
-    // private auths : Auth[] = [];
+  constructor(
+    @InjectModel('User') private readonly userModel: Model<User>,
+    private jwt: JwtService,
+  ) {}
 
-    constructor(
-        @InjectModel('User') private readonly userModel: Model<User>
-    ){}
+  async signup(dto: AuthDto) {
+    // generate the password hash
+    const hash = await argon.hash(dto.password);
+    dto.password = hash
+    // save the new user in the db
+    try{
 
-    async insertUser(createUserDto: CreateUserDto){
-        const newUser = new this.userModel({
-            fullname: createUserDto.fullname,
-            username: createUserDto.username,
-            email: createUserDto.email,
-            password: createUserDto.password,
-
-        });
-        // this.auths.push(newUser)
-        const result = await newUser.save()
-        console.log(result)
-        return result
-
+      const new_user = new this.userModel(dto)
+     const result = await new_user.save()
+     return result
     }
+    catch(error){
+      if(error.code === 11000){
+
+        throw new ForbiddenException(
+                  'Credentials taken',
+                );
+      }
+    }
+      }
+    async signin(dto: AuthDto) {
+
+      //find user by username
+
+      const filter = {username: dto.username}
+      
+      const cur_user = await this.userModel.findOne(filter)
+
+      //username not found
+      if (!cur_user){
+        throw new ForbiddenException(
+                  'Credentials incorrect',
+                );
+      }
+
+       // compare password
+      const pwMatches = await argon.verify(
+        cur_user.password,
+        dto.password,
+      );
+      // if password incorrect throw exception
+      if (!pwMatches)
+        throw new ForbiddenException(
+          'Credentials incorrect',
+        );
+      return this.signToken(dto.username);
+
 }
+
+    async signToken(
+      username: string,
+    ): Promise<{ access_token: string }> {
+      const payload = {
+        username,
+      };
+      const secret = 'secret101';
+  
+      const token = await this.jwt.signAsync(
+        payload,
+        {
+          expiresIn: '15m',
+          secret: secret,
+        },
+      );
+  
+      return {
+        access_token: token,
+      };
+    }
+  }

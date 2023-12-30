@@ -1,18 +1,18 @@
 import * as mongoose from "mongoose";
 
-export const AskedTopicSchema = new mongoose.Schema({
+export const CompleteTopicSchema = new mongoose.Schema({
     title: { type: String, required: true},
     desc: { type: String, required: true},
     tag: { type: String, required: true},
-    applicants: {type: [String], required: false},
+    tutor: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false},
     owner: { type: mongoose.Schema.Types.ObjectId, ref:'User', required: false }
 })
 
-export interface AskedTopic extends mongoose.Document {
+export interface CompleteTopic extends mongoose.Document {
     id: string;
     title: string;
     desc: string;
     tag: string;
-    applicants: [string];
+    tutor: mongoose.Schema.Types.ObjectId;
     owner: mongoose.Schema.Types.ObjectId;
 }
