@@ -1,34 +1,56 @@
-import { Body, Controller, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { AskedTopicService } from './asked-topic.service';
 import { CreateAskedTopicDto } from './dto/createAskedTopic.dto';
+import { JwtGuard } from 'src/auth/guard';
+import { GetUser } from 'src/auth/decorator';
+import { User } from 'src/auth/schema/user.schema';
+import { PatchAskedTopicDto } from './dto/patchAskedTopic.dto';
 
+
+@UseGuards(JwtGuard)
 @Controller('asked-topic')
 export class AskedTopicController {
     constructor(private askedTopicService: AskedTopicService){}
 
     @Post('create-topic')
-    async createTopic(@Body() askedtop: CreateAskedTopicDto): Promise<string> {
-        return await this.askedTopicService.createTopic(askedtop); 
+    async createTopic(@GetUser() user: User, @Body() askedtop: CreateAskedTopicDto){
+        return await this.askedTopicService.createTopic(user, askedtop); 
     }
     
     @Get('all-topics')
-    async get_topics(){
-
-        return this.askedTopicService.get_topics();
+    async getTopics(@GetUser() user: User){
+        return await this.askedTopicService.getTopics(user);
     }
 
     @Patch('apply')
-    async apply(@Body() { applicantId, topicId}){
-
-        return await this.askedTopicService.apply(applicantId, topicId);
-
+    async apply(@GetUser() user: User, @Body() body){
+        return await this.askedTopicService.apply(user, body.id);
     }
 
-    @Post('get-applicants')
-    async get_applicants(@Body() {topicId}){
-        return this.askedTopicService.get_applicants(topicId)
+    @Put('get-applicants')
+    async getApplicants(@Body() body){
+        return this.askedTopicService.get_applicants(body.id)
     }
 
+    @Get('get-my-topics')
+    async getMyTopics(@GetUser() user:User){
+        return this.askedTopicService.getMyTopics(user)
+    }
 
+    @Put('edit-post')
+    async editPost(@Body() patchAskedTopic: PatchAskedTopicDto){
+        return this.askedTopicService.editPost(patchAskedTopic)
+    }
+
+    @Put('accept-applicant')
+    async acceptApplicant(@Body() {applicantId, topicId}){
+        return await this.askedTopicService.acceptApplicant(applicantId, topicId);
+    }
+
+    @Delete('delete-post')
+    async deletePost(@Body() {topicId}){
+        return await this.askedTopicService.deletePost(topicId)
+    }
+    
     
 }

@@ -4,7 +4,6 @@ import {
     HttpCode,
     HttpStatus,
     Post,
-    Req,
   } from '@nestjs/common';
   import { AuthService } from './auth.service';
   import { AuthDto } from './dto';
@@ -19,10 +18,9 @@ import {
     }
   
     @HttpCode(HttpStatus.OK)
-    @Post('signin')
-    signin(@Body() dto: AuthDto) {
-      console.log("sign in is called")
-      return this.authService.signin(dto);
+    @Post('login')
+    login(@Body() dto: AuthDto) {
+      return this.authService.login(dto);
 
     }
   }

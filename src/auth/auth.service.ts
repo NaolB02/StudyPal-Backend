@@ -8,11 +8,13 @@ import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
+import { ConfigService } from '@nestjs/config/dist';
 
 
 @Injectable()
 export class AuthService {
   constructor(
+    private config: ConfigService,
     @InjectModel('User') private readonly userModel: Model<User>,
     private jwt: JwtService,
   ) {}
@@ -23,10 +25,9 @@ export class AuthService {
     dto.password = hash
     // save the new user in the db
     try{
-
-      const new_user = new this.userModel(dto)
-     const result = await new_user.save()
-     return result
+    const new_user = new this.userModel(dto)
+    const result = await new_user.save()
+    return result
     }
     catch(error){
       if(error.code === 11000){
@@ -36,8 +37,8 @@ export class AuthService {
                 );
       }
     }
-      }
-    async signin(dto: AuthDto) {
+  }
+    async login(dto: AuthDto) {
 
       //find user by username
 
@@ -72,7 +73,7 @@ export class AuthService {
       const payload = {
         username,
       };
-      const secret = 'secret101';
+      const secret = this.config.get('JWT_SECRET');
   
       const token = await this.jwt.signAsync(
         payload,

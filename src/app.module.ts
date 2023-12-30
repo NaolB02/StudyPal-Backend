@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AskedTopicModule } from './asked-topic/asked-topic.module';
 import { AuthModule } from './auth/auth.module';
 import { PendingTopicModule } from './pending-topic/pending-topic.module';
 import { CompleteTopicModule } from './complete-topic/complete-topic.module';
+import { AskedTopicModule } from './asked-topic/asked-topic.module';
+import { ConfigModule } from '@nestjs/config/dist/config.module';
+import { ProfileModule } from './profile/profile.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -13,9 +14,13 @@ import { CompleteTopicModule } from './complete-topic/complete-topic.module';
     AuthModule,
     AskedTopicModule,
     PendingTopicModule,
-    CompleteTopicModule],
-  controllers: [AppController],
-  providers: [AppService],
+    CompleteTopicModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    ProfileModule,
+    PaymentModule
+  ],
 
 })
 export class AppModule {}

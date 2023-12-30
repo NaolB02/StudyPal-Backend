@@ -20,7 +20,5 @@ export class CreateUserDto{
     @IsNotEmpty()
     email: string;
 
-    // salt: string;
-
 
 }

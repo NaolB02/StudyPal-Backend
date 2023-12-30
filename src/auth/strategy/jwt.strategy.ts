@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { PassportStrategy } from '@nestjs/passport';
 import { Model } from 'mongoose';
@@ -15,25 +16,20 @@ export class JwtStrategy extends PassportStrategy(
   'jwt',
 ) {
   constructor(
-    
+      config: ConfigService,
       @InjectModel('User') private readonly userModel: Model<User>,
   ) {
     super({
       jwtFromRequest:
         ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'secret101',
+      secretOrKey: config.get('JWT_SECRET'),
     });
   }
 
   async validate(payload: {
     username: string;
   }) {
-    // const user =
-    //   await this.prisma.user.findUnique({
-    //     where: {
-    //       id: payload.sub,
-    //     },
-    //   });
+    
     const filter = {username:payload.username}
     const user =  this.userModel.findOne(filter)
     if(!user){

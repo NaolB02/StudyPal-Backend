@@ -8,15 +8,12 @@ import { UserSchema } from './schema/user.schema';
 import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
-  imports: [PassportModule.register({defaultStrategy: 'jwt'}), 
+  imports: [ 
   JwtModule.register({
-      secret: 'secret101',
-      signOptions:{
-          expiresIn: 5400,
-      },
-}), MongooseModule.forFeature([{name:"User", schema: UserSchema}])],
+    signOptions: { expiresIn: '36000' },
+  }), MongooseModule.forFeature([{name:"User", schema: UserSchema}])],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy ],  
+  providers: [AuthService, JwtStrategy],  
 })
 export class AuthModule {}
 
